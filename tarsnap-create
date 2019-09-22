@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+set -x
+
+CONFDIR="$1"
+shift
+
+ARCHIVE_NAME="$(cat "$CONFDIR/archive-name")"
+TARGET="$(cat "$CONFDIR/target")"
+
+TS="$(date --iso-8601=seconds)"
+
+exec tarsnap \
+	-v \
+	-c \
+	-f "$ARCHIVE_NAME" \
+	"$@" \
+	--configfile "base.conf" \
+	--configfile "$CONFDIR/extra.conf" \
+	-C "$TARGET" \
+	. \
+	>"$CONFDIR/log-$TS.out" 2>"$CONFDIR/log-$TS.err"
